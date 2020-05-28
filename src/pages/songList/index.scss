@@ -103,13 +103,24 @@
       }
       .music-info {
         margin-left: 42rpx;
+        width: 520rpx;
         .music-name {
           font-size: 30rpx;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
+          word-break: normal;
         }
-        .singer-name {
-          font-size: 26rpx;
-          //margin-top: 10rpx;
-          color: #c0c0c0;
+        .singer-box {
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
+          word-break: normal;
+          .singer-name {
+            font-size: 26rpx;
+            //margin-top: 10rpx;
+            color: #c0c0c0;
+          }
         }
       }
     }

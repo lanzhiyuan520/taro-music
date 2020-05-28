@@ -1,5 +1,7 @@
 .music-detail-box {
   height: 100%;
+  position: relative;
+  overflow: hidden;
   .bgc-img {
     overflow: hidden;
     position: absolute;
@@ -8,11 +10,190 @@
     bottom: 0;
     right: 0;
     height: 100%;
-    background-image: url("http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg");
     background-size: cover;
-    //background-position-x: -300px;
-    //background-position-y: 200px;
     filter:blur(30px);
     transform: scaleX(1.5);
+    width: 100%;
   }
+  .bgc-img:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: rgba(0,0,0,.5);
+  }
+}
+.content {
+  .play-box {
+    position: relative;
+    .play-support {
+      position: relative;
+      z-index: 100;
+      height: 328rpx;
+      width: 100%;
+      .support-img{
+        position: absolute;
+        left: 340rpx;
+        z-index: 999;
+        Image {
+          width: 232rpx;
+          height: 328rpx;
+          object-fit: cover;
+        }
+      }
+    }
+    .play-bgc-content {
+      //margin-top: -170rpx;
+      position: relative;
+      top: -170rpx;
+      //top: -70rpx;
+      display: flex;
+      justify-content: center;
+      //overflow: hidden;
+      .bgc-img-box.spin__ {
+        animation: spin 8s linear infinite;
+        transform-origin : center;
+      }
+      .bgc-img-box {
+        position: relative;
+        z-index: 1;
+        width: 560rpx;
+        height: 560rpx;
+        .music-bgc {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 3;
+          width: 560rpx;
+          height: 560rpx;
+          background-image: url("../../../static/img/play-bgc.png");
+          background-size: cover;
+        }
+        .music-img {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%,-50%);
+          display: flex;
+          justify-content: center;
+          z-index: 2;
+          width: 368rpx;
+          height: 368rpx;
+          //display: none;
+          Image {
+            position: relative;
+            z-index: -1;
+            width: 368rpx;
+            height: 368rpx;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.lyrics-content {
+  margin-top: 70rpx;
+  .lyrics-text:first-child{
+    margin-top: 0;
+  }
+  .lyrics-text.active-text {
+    opacity: 1;
+  }
+  .lyrics-text {
+    color: #fff;
+    text-align: center;
+    margin-top: 20rpx;
+    opacity : .3;
+  }
+}
+
+.comments-content {
+  margin-top: 40rpx;
+  padding-bottom: 30rpx;
+  .comment-text {
+    color:#fff;
+    font-size: 34rpx;
+    font-weight: bold;
+    padding-left: 30rpx;
+  }
+  .comment-list {
+    .comment-item {
+      padding: 0 30rpx;
+      margin-top: 20rpx;
+    }
+  }
+}
+
+.like-music {
+  margin-top: 30rpx;
+  .like-text {
+    color:#fff;
+    font-size: 34rpx;
+    font-weight: bold;
+    padding-left: 30rpx;
+  }
+  .like-music-list {
+    padding: 0 30rpx;
+    .like-music-item {
+      margin-top: 40rpx;
+      display: flex;
+      padding-bottom: 10rpx;
+      border-bottom: 1px solid hsla(0,0,0,.1);
+      .music-img {
+        width: 80rpx;
+        height: 80rpx;
+        Image {
+          width: 100%;
+          height: 100%;
+          border-radius: 10rpx;
+        }
+      }
+      .music-info {
+        padding-left: 20rpx;
+        width: 600rpx;
+        position: relative;
+        .music-info-content {
+          .music-name {
+            padding-right: 50rpx;
+            font-size: 30rpx;
+            color: #fff;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+            word-break: normal;
+          }
+          .singer-name {
+            padding-right: 50rpx;
+            width: 100%;
+            font-size: 28rpx;
+            color: hsla(0,0%,100%,.6);
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+            word-break: normal;
+          }
+        }
+        .play-music {
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          Image {
+            width: 60rpx;
+            height: 60rpx;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0) }
+  100% { transform: rotate(360deg) }
 }

@@ -12,7 +12,9 @@ import playIcon2 from '../../../static/img/play-1.png'
 
 const SongList = (props) => {
     const router = useRouter()
-    const [topListInfo,setTopListInfo] = useState({})
+    const [topListInfo,setTopListInfo] = useState({
+        tracks : []
+    })
 
 
     let { idx } = router.params
@@ -35,6 +37,12 @@ const SongList = (props) => {
     useEffect(() => {
         getTopListInfo()
     },[])
+
+    let goMusicDetail = (id) => {
+        Taro.navigateTo({
+            url : `/pages/musicDetail/index?id=${id}`
+        })
+    }
 
     return (
         <View className='song-detail'>
@@ -70,12 +78,18 @@ const SongList = (props) => {
                         {
                             topListInfo.tracks.map((item,index) => {
                                 return (
-                                    <View className="music-item">
+                                    <View className="music-item" key={item.id} onClick={() => {goMusicDetail(item.id)}}>
                                         <View className="music-item-content">
                                             <View className="music-index">{index + 1}</View>
                                             <View className='music-info'>
                                                 <View className='music-name'>{item.name}</View>
-                                                <View className='singer-name'>哈哈</View>
+                                                <View className='singer-box'>
+                                                    {
+                                                        item.ar.map(arItem => {
+                                                            return <Text key={arItem.id} className='singer-name'>{arItem.name}</Text>
+                                                        })
+                                                    }
+                                                </View>
                                             </View>
                                         </View>
                                         <View className="music-play">
