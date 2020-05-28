@@ -1,0 +1,68 @@
+{
+	"miniprogramRoot": "dist/",
+	"projectname": "taro-music",
+	"description": "",
+	"appid": "wxdf68ac7c2c789a52",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true,
+		"coverView": true,
+		"autoAudits": false,
+		"showShadowRootInWxmlPanel": true,
+		"scopeDataCheck": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
+	},
+	"compileType": "miniprogram",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": [
+				{
+					"id": -1,
+					"name": "pages/songList/index",
+					"pathName": "pages/songList/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 1,
+					"name": "pages/musicDetail/index",
+					"pathName": "pages/musicDetail/index",
+					"query": "",
+					"scene": null
+				}
+			]
+		}
+	}
+}

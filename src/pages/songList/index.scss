@@ -1,0 +1,127 @@
+.song-detail {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  .bgc-img {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    //background-image: url("http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg");
+    background-size: cover;
+    background-position-x: -300px;
+    background-position-y: 200px;
+    filter:blur(30px);
+    transform: scaleX(1.5);
+    //Image {
+    //  width: 100%;
+    //  height: 100%;
+    //}
+  }
+}
+.scroll-view-content {
+  height: 100%;
+}
+.song-header-box {
+  padding: 30rpx;
+  display: flex;
+  .song-img {
+    width: 260rpx;
+    Image {
+      width: 260rpx;
+      height: 260rpx;
+      border-radius: 10px;
+    }
+  }
+  .song-info {
+    flex: 1;
+    padding: 0 30rpx;
+    .song-name {
+      font-size: 32rpx;
+      color: #fff;
+    }
+    .song-text-content {
+      display: flex;
+      .song-text {
+        font-size: 24rpx;
+        color: #fff;
+        opacity: .5;
+        margin-top: 20rpx;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        /*autoprefixer:off*/
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
+      }
+    }
+  }
+}
+.music-content {
+  margin-top: 60rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  .music-play-title {
+    padding: 30rpx;
+    display: flex;
+    align-items: center;
+    Image {
+      width: 70rpx;
+      height: 70rpx;
+    }
+    .play-all {
+      color: #333;
+      font-size: 30rpx;
+      margin: 0 3rpx 0 10rpx;
+    }
+    .all-num {
+      font-size: 24rpx;
+      color: #999;
+    }
+  }
+}
+.music-list {
+  padding: 0 30rpx 30rpx;
+  .music-item:last-child {
+    margin-bottom: 0;
+  }
+  .music-item {
+    position: relative;
+    margin-bottom: 40rpx;
+    .music-item-content {
+      display: flex;
+      .music-index {
+        color: #a8a8a8;
+        font-size: 28rpx;
+        padding-left: 30rpx;
+        display: flex;
+        align-items: center;
+      }
+      .music-info {
+        margin-left: 42rpx;
+        .music-name {
+          font-size: 30rpx;
+        }
+        .singer-name {
+          font-size: 26rpx;
+          //margin-top: 10rpx;
+          color: #c0c0c0;
+        }
+      }
+    }
+    .music-play {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      Image {
+        width: 60rpx;
+        height: 60rpx;
+      }
+    }
+  }
+}

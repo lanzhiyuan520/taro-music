@@ -1,0 +1,30 @@
+.ranking-item {
+  display: flex;
+  .ranking-img {
+    position: relative;
+    width: 210rpx;
+    height: 210rpx;
+    Image {
+      width: 210rpx;
+      height: 210rpx;
+      border-radius: 10rpx;
+    }
+  }
+  .ranking-item-music-list {
+    flex: 1;
+    box-sizing: border-box;
+    padding: 20rpx;
+    .music-name:first-child {
+      margin-top: 0;
+    }
+    .music-name {
+      width: 460rpx;
+      color: #818181;
+      font-size: 28rpx;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+      margin-top: 20rpx;
+    }
+  }
+}
