@@ -14,7 +14,7 @@ export default {
     //获取歌词
     getMusicLyric : baseUrl + '/lyric',
     //获取喜欢
-    getLikeList : baseUrl + '/like',
+    getLikeList : baseUrl + '/simi/song',
     //获取评论
     getComment : baseUrl + '/comment/music',
 }

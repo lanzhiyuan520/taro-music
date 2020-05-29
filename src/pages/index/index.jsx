@@ -7,6 +7,7 @@ import { AtIcon } from 'taro-ui'
 
 import request from '../../utils/request'
 import api from '../../utils/api'
+import Skeleton from 'taro-skeleton'
 
 const topType = {
     '云音乐新歌榜':'0',
@@ -65,7 +66,7 @@ export default class Index extends Component {
           </View>
           <View className='ranking-list'>
               {
-                  this.state.topList.map(item => {
+                  this.state.topList.length > 0?this.state.topList.map(item => {
                       return (
                           <View className='ranking-item' key={item.id}>
                               <Ranking
@@ -74,7 +75,7 @@ export default class Index extends Component {
                               ></Ranking>
                           </View>
                       )
-                  })
+                  }):<Skeleton title avatar row={3} />
               }
           </View>
       </View>

@@ -10,6 +10,8 @@ import api from '../../utils/api'
 import playIcon from '../../../static/img/play-2.png'
 import playIcon2 from '../../../static/img/play-1.png'
 
+import Skeleton from 'taro-skeleton'
+
 const SongList = (props) => {
     const router = useRouter()
     const [topListInfo,setTopListInfo] = useState({
@@ -76,7 +78,7 @@ const SongList = (props) => {
                     </View>
                     <View className="music-list">
                         {
-                            topListInfo.tracks.map((item,index) => {
+                            topListInfo.tracks.length > 0?topListInfo.tracks.map((item,index) => {
                                 return (
                                     <View className="music-item" key={item.id} onClick={() => {goMusicDetail(item.id)}}>
                                         <View className="music-item-content">
@@ -97,7 +99,7 @@ const SongList = (props) => {
                                         </View>
                                     </View>
                                 )
-                            })
+                            }):<Skeleton title avatar row={2} />
                         }
                     </View>
                 </View>

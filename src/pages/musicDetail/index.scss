@@ -96,8 +96,14 @@
   }
 }
 
+.lyrics-box {
+  //margin-top: 70rpx;
+  height:180rpx;
+  overflow-y: hidden;
+}
 .lyrics-content {
-  margin-top: 70rpx;
+  transition: all .5s linear;
+  transform: translateY(0);
   .lyrics-text:first-child{
     margin-top: 0;
   }
@@ -107,8 +113,15 @@
   .lyrics-text {
     color: #fff;
     text-align: center;
-    margin-top: 20rpx;
+    //margin-top: 20rpx;
     opacity : .3;
+    font-size: 30rpx;
+    height: 60rpx;
+    //box-sizing: border-box;
+    padding: 20rpx 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

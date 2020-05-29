@@ -4,24 +4,33 @@ import './index.scss'
 
 
 const CommentItem = (props) => {
+    CommentItem.defaultProps = {
+        comment : {}
+    }
+    const { comment } = props
+    let [commentItem,setCommentItem] = useState({})
+    useEffect(() => {
+        comment.commentTime = new Date(comment.time).Format('yyyy-mm-dd')
+        setCommentItem(comment)
+    },[comment])
     return (
         <View className="comment">
             <View className='user-avatar'>
-                <Image src='http://p2.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg'></Image>
+                <Image src={commentItem.user.avatarUrl}></Image>
             </View>
             <View className='comment-item-content'>
                 <View className='comment-item-header'>
                     <View className="comment-user-info">
-                        <View className="user-name">雨落东海只剩浪</View>
-                        <View className='time'>2020年4月25日</View>
+                        <View className="user-name">{commentItem.user.nickname}</View>
+                        <View className='time'>{commentItem.commentTime}</View>
                     </View>
                     <View className="comment-awesome">
-                        <Text>94330</Text>
+                        <Text>{commentItem.likedCount}</Text>
                         <Image src={require('../../../static/img/zan.png')}></Image>
                     </View>
                 </View>
                 <View className="comment-conetent-text">
-                    哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈
+                    {commentItem.content}
                 </View>
             </View>
         </View>
