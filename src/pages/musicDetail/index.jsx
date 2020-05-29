@@ -8,7 +8,7 @@ import request from '../../utils/request'
 import api from '../../utils/api'
 import defaultImg from '../../../static/img/default-img.png'
 
-import { setmusicid, setaudio,setcurrenttime,settop } from '../../store/action/music'
+import { setmusicid, setaudio,setcurrenttime } from '../../store/action/music'
 
 let bgcUrl = 'https://music.163.com/api/img/blur/'
 import classNames from 'classnames'
@@ -20,8 +20,10 @@ const MusicDetail = () => {
     const router = useRouter()
     const state = useSelector(state => state.navbar)
     const music = useSelector(state => state.music)
+    console.log(music)
     const navBarInfo = state.navBarInfo
-    const { id } = router.params
+    const musicId = router.params.id
+    let id = musicId
     const dispatch = useDispatch()
     const [musicDetail,setMusicDetail] = useState({
         songs : {
@@ -145,11 +147,17 @@ const MusicDetail = () => {
         return 'active-text'
     }
 
+    const changeMusic = (mId) => {
+        id = mId
+        music.audioEle.stop()
+        getData()
+    }
+
     return (
         <View className="music-detail-box">
             <View className='bgc-img' style={{backgroundImage:'url("'+musicDetail.songs.al.blurImg+'")'}}></View>
             <NavBar
-                title='歌单'
+                title={musicDetail.songs.al.name}
                 background='transparent'
                 color='#fff'
                 iconTheme='white'
@@ -194,7 +202,7 @@ const MusicDetail = () => {
                             {
                                 musicDetail.likeSongs.map(item => {
                                     return (
-                                        <View key={item.id} className="like-music-item">
+                                        <View key={item.id} className="like-music-item" onClick={() => { changeMusic(item.id) }}>
                                             <View className='music-img'>
                                                 <Image src={item.album.picUrl}></Image>
                                             </View>

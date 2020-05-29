@@ -2,7 +2,8 @@ import {
     SETPLAYMUSICID,
     SETAUDIO,
     SETCURRENTTIME,
-    SETTOP
+    SETCURRENTINDEX,
+    SETMUSICLIST
 } from '../constants/music'
 
 export const setmusicid = (musicId) => {
@@ -23,9 +24,15 @@ export const setcurrenttime = (musicTime) => {
         musicTime
     }
 }
-export const settop = (top) => {
+export const setcurrentindex = (index) => {
     return {
-        type: SETCURRENTTIME,
-        lyricTop : top
+        type: SETCURRENTINDEX,
+        currentIndex : index
+    }
+}
+export const setmusiclist = (musicList) => {
+    return {
+        type: SETMUSICLIST,
+        musicList
     }
 }

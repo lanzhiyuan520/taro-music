@@ -1,10 +1,12 @@
-import { SETPLAYMUSICID, SETAUDIO, SETCURRENTTIME, SETTOP} from '../constants/music'
+import { SETPLAYMUSICID, SETAUDIO, SETCURRENTTIME, SETCURRENTINDEX, SETMUSICLIST} from '../constants/music'
 
 const INITIAL_STATE = {
     musicId: null,
     audioEle : null,
     musicTime : 0,
-    musicTop : 0
+    musicTop : 0,
+    musicList : [],
+    currentIndex : 0
 }
 
 export default function music (state = INITIAL_STATE, action) {
@@ -27,13 +29,18 @@ export default function music (state = INITIAL_STATE, action) {
                 musicTime : action.musicTime
             }
             break;
-        case SETTOP:
+        case SETMUSICLIST:
             return {
                 ...state,
-                musicTime : action.musicTop
+                musicList : action.musicList
             }
             break;
-
+        case SETCURRENTINDEX:
+            return {
+                ...state,
+                currentIndex : action.currentIndex
+            }
+            break;
         default:
             return state
     }

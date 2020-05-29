@@ -11,9 +11,12 @@ import playIcon from '../../../static/img/play-2.png'
 import playIcon2 from '../../../static/img/play-1.png'
 
 import Skeleton from 'taro-skeleton'
+import { setmusiclist, setcurrentindex } from '../../store/action/music'
 
 const SongList = (props) => {
     const router = useRouter()
+    const dispatch = new useDispatch()
+    const music = useSelector(state => state.music)
     const [topListInfo,setTopListInfo] = useState({
         tracks : []
     })
@@ -30,6 +33,7 @@ const SongList = (props) => {
         request(`${api.getTopListInfo}?idx=${idx}`,'get')
             .then(res => {
                 setTopListInfo(res.playlist)
+                dispatch(setmusiclist(res.playlist.tracks))
             })
             .catch(err => {
                 Taro.showToast('加载失败')
@@ -40,7 +44,8 @@ const SongList = (props) => {
         getTopListInfo()
     },[])
 
-    let goMusicDetail = (id) => {
+    let goMusicDetail = (id,index) => {
+        dispatch(setcurrentindex(index))
         Taro.navigateTo({
             url : `/pages/musicDetail/index?id=${id}`
         })
@@ -80,7 +85,7 @@ const SongList = (props) => {
                         {
                             topListInfo.tracks.length > 0?topListInfo.tracks.map((item,index) => {
                                 return (
-                                    <View className="music-item" key={item.id} onClick={() => {goMusicDetail(item.id)}}>
+                                    <View className="music-item" key={item.id} onClick={() => {goMusicDetail(item.id,index)}}>
                                         <View className="music-item-content">
                                             <View className="music-index">{index + 1}</View>
                                             <View className='music-info'>
