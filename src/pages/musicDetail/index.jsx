@@ -1,5 +1,5 @@
 import { useEffect, useRouter, useLayoutEffect, useReducer, useState, useContext, useRef, useCallback, useMemo } from '@tarojs/taro'
-import { View, Text ,Image ,ScrollView} from '@tarojs/components'
+import { View, Text ,Image ,ScrollView, Slider} from '@tarojs/components'
 import NavBar from '../../components/navbar/'
 import './index.scss'
 import { useSelector,useDispatch } from '@tarojs/redux'
@@ -8,11 +8,12 @@ import request from '../../utils/request'
 import api from '../../utils/api'
 import defaultImg from '../../../static/img/default-img.png'
 
-import { setmusicid, setaudio,setcurrenttime } from '../../store/action/music'
+import { setmusicid, setaudio,setcurrenttime,setcurrentindex } from '../../store/action/music'
 
 let bgcUrl = 'https://music.163.com/api/img/blur/'
 import classNames from 'classnames'
 import CommentItem from '../../components/commentItem'
+// import Taro from "@tarojs/taro";
 
 let lyricIndex = -1
 
@@ -20,10 +21,11 @@ const MusicDetail = () => {
     const router = useRouter()
     const state = useSelector(state => state.navbar)
     const music = useSelector(state => state.music)
-    console.log(music)
+    // console.log(music)
     const navBarInfo = state.navBarInfo
     const musicId = router.params.id
-    let id = musicId
+    // let id = musicId
+    const [id,setId] = useState(musicId)
     const dispatch = useDispatch()
     const [musicDetail,setMusicDetail] = useState({
         songs : {
@@ -41,6 +43,10 @@ const MusicDetail = () => {
         lyric : [],
         isFlag : false
     })
+    const [isPaused,setIsPaused] = useState(false)
+    const [currentTimeStr,setCurrentTimeStr] = useState('00:00')
+    const [musicDuration,setMusicDuration] = useState(0)
+    const [currentTime,setCurrentTime] = useState(0)
     // const [currentTime,setCurrentTime] = useState(0)
 
     let getMusicDetail = () => {
@@ -63,6 +69,7 @@ const MusicDetail = () => {
         lyricIndex = -1
         Promise.all([getMusicDetail(),getMusicUrl(),getMusicLyric(),getComment(),getLike()]).then(res => {
             let songs = res[0].songs[0]
+            console.log(res[0],'aaa')
             let blurImg = songs.al.picUrl.split('==/')[1]
             songs.al.blurImg = bgcUrl + blurImg
 
@@ -77,8 +84,6 @@ const MusicDetail = () => {
                     c: item.substring(item.indexOf("]") + 1, item.length)
                 })
             })
-
-            console.log(lyric)
             setMusicDetail({
                 songs : songs,
                 urlDetail : res[1].data[0],
@@ -93,30 +98,49 @@ const MusicDetail = () => {
 
     useEffect(() => {
         getData()
-    },[])
+    },[id])
+
+    useEffect(() => {
+        console.log(currentTimeStr)
+        // setCurrentTimeStr(currentTimeStr)
+    },[currentTimeStr])
 
     useEffect(() => {
         if (musicDetail.isFlag) {
+            let backgroundAudioManager;
             if (music.audioEle) {
                if (music.musicId === id && music.audioEle.paused) {
                    music.audioEle.play()
                }
             }
-            if (music.musicId === id) {
-                return
+            if (music.musicId == id) {
+                backgroundAudioManager = music.audioEle
+                setMusicDuration(Math.floor(backgroundAudioManager.duration))
+                setCurrentTime(Math.floor(backgroundAudioManager.currentTime))
+            } else {
+                let singerStr = ''
+                musicDetail.songs.ar.forEach(item => {
+                    singerStr += item.name
+                })
+                dispatch(setmusicid(id))
+                backgroundAudioManager = Taro.getBackgroundAudioManager()
+                dispatch(setaudio(backgroundAudioManager))
+                backgroundAudioManager.src = musicDetail.urlDetail.url
+                backgroundAudioManager.title = musicDetail.songs.name
+                backgroundAudioManager.epname = musicDetail.songs.al.epname
+                backgroundAudioManager.singer = singerStr
+                backgroundAudioManager.coverImgUrl = musicDetail.songs.al.picUrl
             }
-            let singerStr = ''
-            musicDetail.songs.ar.forEach(item => {
-                singerStr += item.name
+            //播放事件
+            backgroundAudioManager.onPlay(() => {
+                setIsPaused(backgroundAudioManager.paused)
+                setMusicDuration(Math.floor(backgroundAudioManager.duration))
             })
-            dispatch(setmusicid(id))
-            const backgroundAudioManager = Taro.getBackgroundAudioManager()
-            dispatch(setaudio(backgroundAudioManager))
-            backgroundAudioManager.src = musicDetail.urlDetail.url
-            backgroundAudioManager.title = musicDetail.songs.al.name
-            backgroundAudioManager.epname = musicDetail.songs.al.epname
-            backgroundAudioManager.singer = singerStr
-            backgroundAudioManager.coverImgUrl = musicDetail.songs.al.picUrl
+            //暂停事件
+            backgroundAudioManager.onPause(() => {
+                setIsPaused(backgroundAudioManager.paused)
+            })
+
             //播放失败监听
             backgroundAudioManager.onError((e) => {
                 Taro.showToast({
@@ -130,15 +154,42 @@ const MusicDetail = () => {
                     lyricIndex = -1
                 }
                 let currentTime = backgroundAudioManager.currentTime
+                // console.log(currentTime);
                 dispatch(setcurrenttime(currentTime))
+                setCurrentTimeStr(getTimeMMSS(currentTime))
+                setCurrentTime(Math.floor(currentTime))
             })
             //播放停止事件
             backgroundAudioManager.onStop(() => {
-                dispatch(setmusicid(null))
+                setIsPaused(backgroundAudioManager.paused)
                 lyricIndex = -1
             })
             //可以播放了
-
+            backgroundAudioManager.onCanplay(() => {
+                // backgroundAudioManager.play()
+                console.log('可以播放了')
+            })
+            //缓冲
+            backgroundAudioManager.onWaiting(() => {
+                // backgroundAudioManager.pause()
+                console.log('缓冲中')
+                // setIsPaused(backgroundAudioManager.paused)
+            })
+            //播放完毕
+            backgroundAudioManager.onEnded(() => {
+                console.log('播放完毕')
+                nextMusic()
+            })
+            //下一首
+            backgroundAudioManager.onNext(() => {
+                console.log('下一首')
+                nextMusic()
+            })
+            //上一首
+            backgroundAudioManager.onPrev(() => {
+                console.log('上一首')
+                prevMusic()
+            })
         }
     },[musicDetail])
 
@@ -147,17 +198,78 @@ const MusicDetail = () => {
         return 'active-text'
     }
 
+    const getMusicState = () => {
+        console.log(music.audioEle,'sss')
+        // return music.audioEle.paused;
+        return true;
+    }
+
+    const getMusicOrder = () => {
+        return Taro.getStorageSync('playOrder')
+    }
+
     const changeMusic = (mId) => {
-        id = mId
-        music.audioEle.stop()
-        getData()
+        setId(mId)
+    }
+
+    const pausedMusic = () => {
+        music.audioEle.pause()
+    }
+
+    const playMusic = () => {
+        music.audioEle.play()
+    }
+
+    const prevMusic = () => {
+        let musicOrder = getMusicOrder()
+        let { musicList,currentIndex } = music
+        let prevMusicId
+        if (currentIndex > 0) {
+            prevMusicId = musicList[currentIndex-1].id
+            dispatch(setcurrentindex(currentIndex-1))
+        } else {
+            prevMusicId = musicList[musicList.length-1].id
+            dispatch(setcurrentindex(musicList.length-1))
+        }
+
+        if (musicOrder === 0) {
+            changeMusic(prevMusicId)
+        }
+    }
+
+    const nextMusic = () => {
+        let musicOrder = getMusicOrder()
+        let { musicList,currentIndex } = music
+        let nextMusicId
+        if (musicList[currentIndex+1]) {
+            nextMusicId = musicList[currentIndex+1].id
+            dispatch(setcurrentindex(currentIndex+1))
+        } else {
+            nextMusicId = musicList[0].id
+            dispatch(setcurrentindex(0))
+        }
+
+        if (musicOrder === 0) {
+            changeMusic(nextMusicId)
+        }
+    }
+
+    const getTimeMMSS = date => {
+        let minute =  Math.floor(date / 60)
+        let second =  Math.floor(date % 60)
+        return `${minute < 10?'0'+minute:minute}:${second < 10? '0'+second:second}`
+    }
+
+    const changeMusicPosition = e => {
+        let val = e.detail.value
+        music.audioEle.seek(val)
     }
 
     return (
         <View className="music-detail-box">
             <View className='bgc-img' style={{backgroundImage:'url("'+musicDetail.songs.al.blurImg+'")'}}></View>
             <NavBar
-                title={musicDetail.songs.al.name}
+                title={musicDetail.songs.name}
                 background='transparent'
                 color='#fff'
                 iconTheme='white'
@@ -179,6 +291,34 @@ const MusicDetail = () => {
                                     <Image src={musicDetail.songs.al.picUrl}></Image>
                                 </View>
                             </View>
+                        </View>
+                    </View>
+                    <View className='music-slider-content'>
+                        <Slider
+                            activeColor='#fff'
+                            backgroundColor='hsla(0,0%,100%,.6)'
+                            max={musicDuration}
+                            value={currentTime}
+                            block-size='12'
+                            onChange={changeMusicPosition}
+                        ></Slider>
+                        <Text className='time'>{currentTimeStr}</Text>
+                    </View>
+                    <View className='operating'>
+                        <View className='prev-music' onClick={prevMusic}>
+                            <Image className='music-icon' src={require('../../../static/img/prec-music-icon.png')}></Image>
+                        </View>
+                        <View className="music-play-content">
+                            {
+                                isPaused?
+                                    <Image onClick={playMusic} className='music-icon' src={require('../../../static/img/play-music-icon.png')}></Image>
+                                    :
+                                    <Image onClick={pausedMusic} className='music-icon' src={require('../../../static/img/zanting-music-icon.png')}></Image>
+                            }
+
+                        </View>
+                        <View className="next-music" onClick={nextMusic}>
+                            <Image className='music-icon' src={require('../../../static/img/next-music-icon.png')}></Image>
                         </View>
                     </View>
                     <View className='lyrics-box'>

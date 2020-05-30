@@ -206,6 +206,34 @@
   }
 }
 
+.music-slider-content {
+  width: 500rpx;
+  margin: 0 auto;
+  slider {
+    margin: 0;
+  }
+  .time {
+    font-size: 24rpx;
+    color: hsla(0,0%,100%,.6);
+  }
+}
+
+.operating {
+  display: flex;
+  width: 400rpx;
+  margin: 0 auto 30rpx;
+  justify-content: center;
+  .prev-music {
+
+  }
+  .music-play-content {
+    margin: 0 50rpx;
+  }
+}
+.music-icon {
+  width: 60rpx;
+  height: 60rpx;
+}
 @keyframes spin {
   0% { transform: rotate(0) }
   100% { transform: rotate(360deg) }

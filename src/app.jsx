@@ -32,6 +32,11 @@ class App extends Component {
               if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
           return fmt;
       }
+
+      let playOrder = Taro.getStorageSync('playOrder')
+      if (!playOrder) {
+          Taro.setStorageSync('playOrder',0)
+      }
   }
 
   componentDidShow () {}
