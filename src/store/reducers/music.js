@@ -6,7 +6,7 @@ const INITIAL_STATE = {
     musicTime : 0,
     musicTop : 0,
     musicList : [],
-    currentIndex : 0
+    currentIndex : null
 }
 
 export default function music (state = INITIAL_STATE, action) {

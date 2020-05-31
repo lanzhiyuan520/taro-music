@@ -2,7 +2,7 @@ import { useEffect, useRouter, useLayoutEffect, useReducer, useState, useContext
 import { View, Text ,Image ,ScrollView, Slider} from '@tarojs/components'
 import NavBar from '../../components/navbar/'
 import './index.scss'
-import { useSelector,useDispatch } from '@tarojs/redux'
+import { useSelector,useDispatch,useStore } from '@tarojs/redux'
 
 import request from '../../utils/request'
 import api from '../../utils/api'
@@ -25,6 +25,7 @@ const MusicDetail = () => {
     const musicId = router.params.id
     let id = musicId
     const dispatch = useDispatch()
+    const store = useStore()
     const [musicDetail,setMusicDetail] = useState({
         songs : {
             al : {
@@ -134,9 +135,6 @@ const MusicDetail = () => {
                 dispatch(setmusicid(id))
                 backgroundAudioManager = Taro.getBackgroundAudioManager()
                 dispatch(setaudio(backgroundAudioManager))
-
-                console.log(music)
-
                 backgroundAudioManager.src = musicDetail.urlDetail.url
                 backgroundAudioManager.title = musicDetail.songs.name
                 backgroundAudioManager.epname = musicDetail.songs.al.epname
@@ -224,7 +222,8 @@ const MusicDetail = () => {
 
     const prevMusic = () => {
         let musicOrder = getMusicOrder()
-        let { musicList,currentIndex } = music
+        let { musicList } = music
+        let currentIndex = store.getState().music.currentIndex
         let prevMusicId
         if (currentIndex > 0) {
             prevMusicId = musicList[currentIndex-1].id
@@ -241,8 +240,10 @@ const MusicDetail = () => {
 
     const nextMusic = () => {
         let musicOrder = getMusicOrder()
-        let { musicList,currentIndex } = music
+        let currentIndex = store.getState().music.currentIndex
+        let { musicList } = music
         let nextMusicId
+        console.log(currentIndex,'1111')
         if (musicList[currentIndex+1]) {
             nextMusicId = musicList[currentIndex+1].id
             dispatch(setcurrentindex(currentIndex+1))

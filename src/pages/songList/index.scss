@@ -124,6 +124,12 @@
         }
       }
     }
+    .beat-item{
+      position: absolute;
+      right: 80rpx;
+      top: 50%;
+      transform: translateY(-50%);
+    }
     .music-play {
       position: absolute;
       right: 0;

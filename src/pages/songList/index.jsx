@@ -1,6 +1,7 @@
 import { useEffect, useRouter, useLayoutEffect, useReducer, useState, useContext, useRef, useCallback, useMemo } from '@tarojs/taro'
 import { View, Text ,Image ,ScrollView} from '@tarojs/components'
 import NavBar from '../../components/navbar/'
+import MusicBeat from '../../components/musicBeat'
 import './index.scss'
 import { useSelector,useDispatch } from '@tarojs/redux'
 
@@ -62,16 +63,33 @@ const SongList = (props) => {
                 back
                 home
             ></NavBar>
-            <ScrollView scrollY={true} className='scroll-view-content' style={`height:calc(100% - ${navBarInfo.navBarHeight + navBarInfo.navBarExtendHeight}px)`}>
+            <ScrollView scrollAnchoring={true} scrollY={true} className='scroll-view-content' style={`height:calc(100% - ${navBarInfo.navBarHeight + navBarInfo.navBarExtendHeight}px)`}>
                 <View className='song-header-box'>
                     <View>{title}</View>
                     <View className='song-img'>
-                        <Image src={topListInfo.coverImgUrl}></Image>
+                        {
+                            topListInfo.coverImgUrl?
+                                <Image src={topListInfo.coverImgUrl}></Image>
+                                :
+                                <Skeleton avatar avatarShape='square' avatarSize={180}/>
+                        }
+
                     </View>
                     <View className='song-info'>
-                        <View className='song-name'>{topListInfo.name}</View>
+                        {
+                            topListInfo.name?
+                                <View className='song-name'>{topListInfo.name}</View>
+                                :
+                                <Skeleton title titleWidth='70%'/>
+                        }
+
                         <View className='song-text-content'>
-                            <View className='song-text'>{topListInfo.description}</View>
+                            {
+                                topListInfo.description?
+                                    <View className='song-text'>{topListInfo.description}</View>
+                                    :
+                                    <Skeleton title titleWidth='70%' row={2}/>
+                            }
                         </View>
                     </View>
                 </View>
@@ -98,6 +116,13 @@ const SongList = (props) => {
                                                     }
                                                 </View>
                                             </View>
+                                        </View>
+                                        <View className='beat-item'>
+                                            {
+                                                item.id == music.musicId?
+                                                    <MusicBeat></MusicBeat>
+                                                    :null
+                                            }
                                         </View>
                                         <View className="music-play">
                                             <Image src={playIcon2}></Image>
