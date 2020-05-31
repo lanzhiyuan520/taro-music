@@ -21,11 +21,9 @@ const MusicDetail = () => {
     const router = useRouter()
     const state = useSelector(state => state.navbar)
     const music = useSelector(state => state.music)
-    // console.log(music)
     const navBarInfo = state.navBarInfo
     const musicId = router.params.id
-    // let id = musicId
-    const [id,setId] = useState(musicId)
+    let id = musicId
     const dispatch = useDispatch()
     const [musicDetail,setMusicDetail] = useState({
         songs : {
@@ -47,7 +45,6 @@ const MusicDetail = () => {
     const [currentTimeStr,setCurrentTimeStr] = useState('00:00')
     const [musicDuration,setMusicDuration] = useState(0)
     const [currentTime,setCurrentTime] = useState(0)
-    // const [currentTime,setCurrentTime] = useState(0)
 
     let getMusicDetail = () => {
         return request(`${api.getMusicDetail}?ids=${id}`,'get')
@@ -66,7 +63,6 @@ const MusicDetail = () => {
     }
 
     let getData = () => {
-        lyricIndex = -1
         Promise.all([getMusicDetail(),getMusicUrl(),getMusicLyric(),getComment(),getLike()]).then(res => {
             let songs = res[0].songs[0]
             console.log(res[0],'aaa')
@@ -93,25 +89,38 @@ const MusicDetail = () => {
                 lyric : lyric,
                 isFlag : true
             })
+            //播放音乐
+            plalMusic({
+                songs : songs,
+                urlDetail : res[1].data[0],
+                lyricDetail : res[2].lyc,
+                comment : res[3],
+                likeSongs : res[4].songs,
+                lyric : lyric,
+                isFlag : true
+            })
         })
     }
 
     useEffect(() => {
         getData()
-    },[id])
+    },[])
 
-    useEffect(() => {
-        console.log(currentTimeStr)
-        // setCurrentTimeStr(currentTimeStr)
-    },[currentTimeStr])
-
-    useEffect(() => {
+    const plalMusic = (musicDetail) => {
         if (musicDetail.isFlag) {
+            if (!musicDetail.urlDetail.url) {
+                Taro.showModal({
+                    title : '提示',
+                    content : '该歌曲暂时不能播放！',
+                    showCancel : false,
+                })
+                return
+            }
             let backgroundAudioManager;
             if (music.audioEle) {
-               if (music.musicId === id && music.audioEle.paused) {
-                   music.audioEle.play()
-               }
+                if (music.musicId == id && music.audioEle.paused) {
+                    music.audioEle.play()
+                }
             }
             if (music.musicId == id) {
                 backgroundAudioManager = music.audioEle
@@ -125,6 +134,9 @@ const MusicDetail = () => {
                 dispatch(setmusicid(id))
                 backgroundAudioManager = Taro.getBackgroundAudioManager()
                 dispatch(setaudio(backgroundAudioManager))
+
+                console.log(music)
+
                 backgroundAudioManager.src = musicDetail.urlDetail.url
                 backgroundAudioManager.title = musicDetail.songs.name
                 backgroundAudioManager.epname = musicDetail.songs.al.epname
@@ -154,7 +166,6 @@ const MusicDetail = () => {
                     lyricIndex = -1
                 }
                 let currentTime = backgroundAudioManager.currentTime
-                // console.log(currentTime);
                 dispatch(setcurrenttime(currentTime))
                 setCurrentTimeStr(getTimeMMSS(currentTime))
                 setCurrentTime(Math.floor(currentTime))
@@ -162,18 +173,14 @@ const MusicDetail = () => {
             //播放停止事件
             backgroundAudioManager.onStop(() => {
                 setIsPaused(backgroundAudioManager.paused)
-                lyricIndex = -1
             })
             //可以播放了
             backgroundAudioManager.onCanplay(() => {
-                // backgroundAudioManager.play()
                 console.log('可以播放了')
             })
             //缓冲
             backgroundAudioManager.onWaiting(() => {
-                // backgroundAudioManager.pause()
                 console.log('缓冲中')
-                // setIsPaused(backgroundAudioManager.paused)
             })
             //播放完毕
             backgroundAudioManager.onEnded(() => {
@@ -191,17 +198,11 @@ const MusicDetail = () => {
                 prevMusic()
             })
         }
-    },[musicDetail])
+    }
 
     const changeLyric = (index) => {
         lyricIndex = index
         return 'active-text'
-    }
-
-    const getMusicState = () => {
-        console.log(music.audioEle,'sss')
-        // return music.audioEle.paused;
-        return true;
     }
 
     const getMusicOrder = () => {
@@ -209,7 +210,8 @@ const MusicDetail = () => {
     }
 
     const changeMusic = (mId) => {
-        setId(mId)
+        id = mId
+        getData()
     }
 
     const pausedMusic = () => {
