@@ -22,6 +22,14 @@ import { AtDrawer } from 'taro-ui'
 
 let lyricIndex = -1
 
+let backgroundAudioManager;
+
+let playMode = {
+    0 : require('../../../static/img/xunhuan-icon.png'),
+    1 : require('../../../static/img/suiji-icon.png'),
+    2 : require('../../../static/img/one-xunhuan-icon.png')
+}
+
 const MusicDetail = () => {
     const router = useRouter()
     const state = useSelector(state => state.navbar)
@@ -52,6 +60,7 @@ const MusicDetail = () => {
     const [musicDuration,setMusicDuration] = useState(0)
     const [currentTime,setCurrentTime] = useState(0)
     const [isShowMusic,setIsShowMusic] = useState(false)
+    const [playModeIcon,setPlayModeIcon] = useState(0)
 
     let getMusicDetail = () => {
         return request(`${api.getMusicDetail}?ids=${id}`,'get')
@@ -110,6 +119,7 @@ const MusicDetail = () => {
     }
 
     useEffect(() => {
+        setPlayModeIcon(getMusicOrder() || 0)
         getData()
     },[])
 
@@ -123,7 +133,6 @@ const MusicDetail = () => {
                 })
                 return
             }
-            let backgroundAudioManager;
             if (music.audioEle) {
                 if (music.musicId == id && music.audioEle.paused) {
                     music.audioEle.play()
@@ -177,7 +186,8 @@ const MusicDetail = () => {
             //播放停止事件
             backgroundAudioManager.onStop(() => {
                 setIsPaused(backgroundAudioManager.paused)
-                setmusicid(null)
+                console.log('播放停止')
+                // setmusicid(null)
             })
             //可以播放了
             backgroundAudioManager.onCanplay(() => {
@@ -190,7 +200,12 @@ const MusicDetail = () => {
             //播放完毕
             backgroundAudioManager.onEnded(() => {
                 console.log('播放完毕')
-                nextMusic()
+                setIsPaused(backgroundAudioManager.paused)
+                if (getMusicOrder() === 2) {
+                    getData()
+                } else {
+                    nextMusic()
+                }
             })
             //下一首
             backgroundAudioManager.onNext(() => {
@@ -214,8 +229,23 @@ const MusicDetail = () => {
         return Taro.getStorageSync('playOrder')
     }
 
-    const changeMusic = (mId) => {
+    const changeMode = () => {
+        let order = getMusicOrder() || 0
+        let nextOrder = order+1
+        if (playMode[nextOrder]) {
+            wx.setStorageSync('playOrder',nextOrder)
+            setPlayModeIcon(nextOrder)
+        } else {
+            wx.setStorageSync('playOrder',0)
+            setPlayModeIcon(0)
+        }
+    }
+
+    const changeMusic = (mId,index) => {
         id = mId
+        if (index || index === 0) {
+            dispatch(setcurrentindex(index))
+        }
         getData()
     }
 
@@ -250,17 +280,20 @@ const MusicDetail = () => {
         let currentIndex = store.getState().music.currentIndex
         let { musicList } = music
         let nextMusicId
-        console.log(currentIndex,'1111')
-        if (musicList[currentIndex+1]) {
-            nextMusicId = musicList[currentIndex+1].id
-            dispatch(setcurrentindex(currentIndex+1))
-        } else {
-            nextMusicId = musicList[0].id
-            dispatch(setcurrentindex(0))
-        }
 
-        if (musicOrder === 0) {
+        if (musicOrder === 0 || musicOrder === 2) {
+            if (musicList[currentIndex+1]) {
+                nextMusicId = musicList[currentIndex+1].id
+                dispatch(setcurrentindex(currentIndex+1))
+            } else {
+                nextMusicId = musicList[0].id
+                dispatch(setcurrentindex(0))
+            }
             changeMusic(nextMusicId)
+        } else if (musicOrder === 1) {
+            console.log('随机')
+        } else {
+
         }
     }
 
@@ -323,8 +356,8 @@ const MusicDetail = () => {
                         <Text className='time'>{currentTimeStr}</Text>
                     </View>
                     <View className='operating'>
-                        <View className='play-status'>
-                            <Image className='music-icon' src={require('../../../static/img/xunhuan-icon.png')}></Image>
+                        <View className='play-status' onClick={changeMode}>
+                            <Image className='music-icon' src={playMode[playModeIcon]}></Image>
                         </View>
                         <View className='prev-music' onClick={prevMusic}>
                             <Image className='music-icon' src={require('../../../static/img/prec-music-icon.png')}></Image>
@@ -412,9 +445,9 @@ const MusicDetail = () => {
                         <View style={`height:${navBarInfo.navBarHeight + navBarInfo.navBarExtendHeight}px`}></View>
                         <View className="music-list">
                             {
-                                music.musicList.map((item) => {
+                                music.musicList.map((item,index) => {
                                     return (
-                                        <View className="music-item" key={item.id} onClick={() => {changeMusic(item.id)}}>
+                                        <View className="music-item" key={item.id} onClick={() => {changeMusic(item.id,index);}}>
                                             <Text className={classNames('music-name',item.id==music.musicId?'active-style':'')}>
                                                 {item.name}
                                             </Text>
