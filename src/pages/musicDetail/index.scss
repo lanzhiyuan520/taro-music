@@ -219,21 +219,58 @@
 }
 
 .operating {
+  position: relative;
   display: flex;
   width: 400rpx;
   margin: 0 auto 30rpx;
   justify-content: center;
-  .prev-music {
-
+  View:last-child {
+    margin-right: 0;
   }
-  .music-play-content {
-    margin: 0 50rpx;
+  View {
+    margin-right: 50rpx;
+  }
+  .music-list-btn {
+
+    Image {
+      width: 50rpx;
+      height: 50rpx;
+    }
   }
 }
+
 .music-icon {
   width: 60rpx;
   height: 60rpx;
 }
+
+.music-list {
+  box-sizing: border-box;
+  padding: 0 30rpx;
+  overflow-x: hidden;
+  .music-item {
+    display: flex;
+    box-sizing: border-box;
+    padding: 20rpx 0;
+    width: 100%;
+    border-bottom: 1px solid hsla(0,0,0,.1);
+    overflow-x: scroll;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    .music-name {
+      font-size: 30rpx;
+    }
+    .singer-name {
+      font-size: 26rpx;
+      color: #666;
+      margin-left: 20rpx;
+    }
+    .active-style {
+      color: #d43c33;
+    }
+  }
+}
+
 @keyframes spin {
   0% { transform: rotate(0) }
   100% { transform: rotate(360deg) }

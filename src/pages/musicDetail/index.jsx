@@ -13,6 +13,11 @@ import { setmusicid, setaudio,setcurrenttime,setcurrentindex } from '../../store
 let bgcUrl = 'https://music.163.com/api/img/blur/'
 import classNames from 'classnames'
 import CommentItem from '../../components/commentItem'
+
+
+import { AtDrawer } from 'taro-ui'
+
+
 // import Taro from "@tarojs/taro";
 
 let lyricIndex = -1
@@ -29,7 +34,7 @@ const MusicDetail = () => {
     const [musicDetail,setMusicDetail] = useState({
         songs : {
             al : {
-                picUrl : '',
+                picUrl : defaultImg,
                 blurImg : defaultImg
             }
         },
@@ -46,6 +51,7 @@ const MusicDetail = () => {
     const [currentTimeStr,setCurrentTimeStr] = useState('00:00')
     const [musicDuration,setMusicDuration] = useState(0)
     const [currentTime,setCurrentTime] = useState(0)
+    const [isShowMusic,setIsShowMusic] = useState(false)
 
     let getMusicDetail = () => {
         return request(`${api.getMusicDetail}?ids=${id}`,'get')
@@ -171,6 +177,7 @@ const MusicDetail = () => {
             //播放停止事件
             backgroundAudioManager.onStop(() => {
                 setIsPaused(backgroundAudioManager.paused)
+                setmusicid(null)
             })
             //可以播放了
             backgroundAudioManager.onCanplay(() => {
@@ -268,6 +275,14 @@ const MusicDetail = () => {
         music.audioEle.seek(val)
     }
 
+    const showMusicList = () => {
+        setIsShowMusic(true)
+    }
+
+    const hideMusic = () => {
+        setIsShowMusic(false)
+    }
+
     return (
         <View className="music-detail-box">
             <View className='bgc-img' style={{backgroundImage:'url("'+musicDetail.songs.al.blurImg+'")'}}></View>
@@ -308,6 +323,9 @@ const MusicDetail = () => {
                         <Text className='time'>{currentTimeStr}</Text>
                     </View>
                     <View className='operating'>
+                        <View className='play-status'>
+                            <Image className='music-icon' src={require('../../../static/img/xunhuan-icon.png')}></Image>
+                        </View>
                         <View className='prev-music' onClick={prevMusic}>
                             <Image className='music-icon' src={require('../../../static/img/prec-music-icon.png')}></Image>
                         </View>
@@ -322,6 +340,9 @@ const MusicDetail = () => {
                         </View>
                         <View className="next-music" onClick={nextMusic}>
                             <Image className='music-icon' src={require('../../../static/img/next-music-icon.png')}></Image>
+                        </View>
+                        <View className='music-list-btn' onClick={showMusicList}>
+                            <Image className='music-icon' src={require('../../../static/img/music-list-icon.png')}></Image>
                         </View>
                     </View>
                     <View className='lyrics-box'>
@@ -382,6 +403,36 @@ const MusicDetail = () => {
                             }
                         </View>
                     </View>
+                    <AtDrawer
+                        show={isShowMusic}
+                        right
+                        mask
+                        onClose={hideMusic}
+                    >
+                        <View style={`height:${navBarInfo.navBarHeight + navBarInfo.navBarExtendHeight}px`}></View>
+                        <View className="music-list">
+                            {
+                                music.musicList.map((item) => {
+                                    return (
+                                        <View className="music-item" key={item.id} onClick={() => {changeMusic(item.id)}}>
+                                            <Text className={classNames('music-name',item.id==music.musicId?'active-style':'')}>
+                                                {item.name}
+                                            </Text>
+                                            {
+                                                item.ar.map((arItem,arIndex) => {
+                                                    return (
+                                                        <Text key={arItem.id} className={classNames('singer-name',item.id==music.musicId?'active-style':'')}>
+                                                            {arIndex===0?'-':''}{arItem.name}
+                                                        </Text>
+                                                    )
+                                                })
+                                            }
+                                        </View>
+                                    )
+                                })
+                            }
+                        </View>
+                    </AtDrawer>
                 </View>
             </ScrollView>
         </View>
